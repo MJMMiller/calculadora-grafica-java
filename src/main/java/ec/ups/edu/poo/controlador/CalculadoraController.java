@@ -1,59 +1,64 @@
 package ec.ups.edu.poo.controlador;
 
 import ec.ups.edu.poo.modelo.Calculadora;
-import ec.ups.edu.poo.vista.CalculadoraVista;
+import ec.ups.edu.poo.vista.CalculadoraView;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import java.awt.*;
-import java.awt.event.*;
+public class CalculadoraController {
 
-public class CalculadoraController implements ActionListener, WindowListener {
+    private CalculadoraView vista;
+    private Calculadora modelo;
 
-    private CalculadoraVista calculdoraVista;
-    private Calculadora calculadora;
-
-    public CalculadoraController(CalculadoraVista calculdoraVista, Calculadora calculadora) {
-        this.calculdoraVista = calculdoraVista;
-        this.calculadora = calculadora;
+    public CalculadoraController(CalculadoraView vista, Calculadora modelo) {
+        this.vista = vista;
+        this.modelo = modelo;
+        agregarEventos();
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    private void agregarEventos() {
+        vista.botonCalcular.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double num1 = Double.parseDouble(vista.tf1.getText());
+                double num2 = Double.parseDouble(vista.tf2.getText());
 
-    }
+                modelo.setValor1(num1);
+                modelo.setValor2(num2);
 
-    @Override
-    public void windowOpened(WindowEvent e) {
+                double resultado = 0;
 
-    }
+                if (vista.checkboxSuma.getState()) {
+                    resultado = modelo.sumar();
+                } else if (vista.checkboxResta.getState()) {
+                    resultado = modelo.restar();
+                } else if (vista.checkboxMultiplicar.getState()) {
+                    resultado = modelo.multiplicar();
+                } else if (vista.checkboxDivision.getState()) {
+                    if (num2 != 0) {
+                        resultado = modelo.dividir();
+                    } else {
+                        vista.tfresultado.setText("Error");
+                        return;
+                    }
+                }
 
-    @Override
-    public void windowClosing(WindowEvent e) {
+                vista.tfresultado.setText(String.valueOf(resultado));
+            }
+        });
 
-    }
-
-    @Override
-    public void windowClosed(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowIconified(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowDeiconified(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowActivated(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowDeactivated(WindowEvent e) {
-
+        vista.botonLimpiar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                vista.tf1.setText("0.00");
+                vista.tf2.setText("0.00");
+                vista.tfresultado.setText("0.00");
+                vista.checkboxSuma.setState(false);
+                vista.checkboxResta.setState(false);
+                vista.checkboxMultiplicar.setState(false);
+                vista.checkboxDivision.setState(false);
+            }
+        });
     }
 }
